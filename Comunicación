@@ -1,0 +1,21 @@
+library("forecast")
+library("stats")
+library("fUnitRoots")
+
+#Gráfica comunicación.
+
+plot(ts(GruBienSer$Com), col = "black")
+
+#Gráfica de las ACF y PACF
+
+acf(ts(GruBienSer$Com))
+pacf(ts(GruBienSer$Com))
+
+plot(acfCom,main="", xlab= "Lag", ylab="ACF")
+plot(pacfCom,main="", xlab= "Lag", ylab="PACF")
+
+#Modelo para comunicación.
+
+ArimaCom=arima(ts(GruBienSer$Com), order(0,0,0))
+summary(ArimaCom)
+

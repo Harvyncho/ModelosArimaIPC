@@ -1,0 +1,34 @@
+library("forecast")
+library("fUnitRoots")
+#Analisis serie Salud
+
+#Gráfica salud.
+
+plot(ts(GruBienSer$Sal), main="Índice Salud", 
+     xlab= "Meses", ylab="Salud")
+
+# PACF y ACF Salud
+
+acf(ts(GruBienSer$Sal))
+pacf(ts(GruBienSer$Sal))
+
+#Modelo AR2 y AR3
+
+Ar1Sal=arima(ts(GruBienSer$Sal), order=c(2,0,0))
+summary(Ar1Sal)
+
+Ar12Sal=arima(ts(GruBienSer$Sal), order=c(3,0,0))
+summary(Ar12Sal)
+
+BIC(Ar12Sal)
+BIC(Ar1Sal)
+
+dif1sal<-diff(ts(GruBienSer$Sal))
+
+plot(dif1sal, main="Índice Salud", 
+     xlab= "Meses", ylab="Salud")
+
+acf(dif1sal)
+decompose(ts(GruBienSer$Sal))
+adfTest(ts(GruBienSer$Sal),lags=3)
+

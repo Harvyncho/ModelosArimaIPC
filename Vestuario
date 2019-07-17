@@ -1,0 +1,36 @@
+library("forecast")
+library("fUnitRoots")
+#Analisis serie vestuario
+
+#Gráfica serie Vestuario
+
+plot(ts(GruBienSer$Ves), main="Índice Vestuario", 
+     xlab= "Meses", ylab="Vestuario")
+
+# PACF y ACF vestuario
+
+acf(ts(GruBienSer$Ves))
+pacf(ts(GruBienSer$Ves))
+
+#Diferenciación de orden 1 de la serie
+
+dif1ves<-diff(ts(GruBienSer$Ves))
+plot(dif1ves,main="1 diferencia vestuario", 
+     xlab= "Meses", ylab="DifVes")
+
+#acf y pacf de la primera diferencia de vestuario
+
+acf(dif1ves)
+pacf(dif1ves)
+
+
+#Modelos ARIMA(0,1,3) y ARIMA(0,1,4)
+
+Arimaves013=arima(ts(GruBienSer$Ves), order=c(0,1,3))
+summary(Arimaves013)
+
+Arimaves014=arima(ts(GruBienSer$Ves), order=c(0,1,4))
+summary(Arimaves2)
+
+BIC(Arimaves013)
+BIC(Arimaves014)

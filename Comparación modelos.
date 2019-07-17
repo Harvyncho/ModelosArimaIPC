@@ -1,0 +1,161 @@
+ibrary("vars")
+library("dplyr")
+library("forecast")
+
+
+#Modelo Educación ARMA(1,1) y predicciones
+
+predEdu <- function(x){
+  dane1 = ts(GruBienSer$Edu)[1:x]
+  Arimadane=arima(dane1, order = c(1,0,1))
+  return(forecast(Arimadane)$mean[1])
+}
+
+VecPreEdu=1:6
+for (i in 78:83){
+    VecPreEdu[i-77] <- predEdu(i)
+}
+#Modelo Diversión AR(4) predicciones
+
+predDiv <- function(x){
+  dane1 = ts(GruBienSer$Div)[1:x]
+  Arimadane=arima(dane1, order = c(4,0,0))
+  return(forecast(Arimadane)$mean[1])
+}
+
+VecPreDiv=1:6
+for (i in 78:83){
+  VecPreDiv[i-77] <- predDiv(i)
+}
+
+#Modelo Transporte MA(1) predicciones
+
+predTran <- function(x){
+  dane1 = ts(GruBienSer$Tran)[1:x]
+  Arimadane=arima(dane1, order = c(0,0,1))
+  return(forecast(Arimadane)$mean[1])
+}
+
+VecPreTran=1:6
+for (i in 78:83){
+  VecPreTran[i-77] <- predTran(i)
+}
+
+#Modelo Otros ARIMA(2,1,1) predicciones
+
+predOtr <- function(x){
+  dane1 = ts(GruBienSer$Otr)[1:x]
+  Arimadane=arima(dane1, order = c(0,0,1))
+  return(forecast(Arimadane)$mean[1])
+}
+
+VecPreOtr=1:6
+for (i in 78:83){
+  VecPreOtr[i-77] <- predOtr(i)
+}
+
+#Modelo Vivienda ARIMA(0,0,0) predicciones
+
+predViv <- function(x){
+  dane1 = ts(GruBienSer$Viv)[1:x]
+  Arimadane=arima(dane1, order = c(0,0,0))
+  return(forecast(Arimadane)$mean[1])
+}
+
+VecPreViv=1:6
+for (i in 78:83){
+  VecPreViv[i-77] <- predViv(i)
+}
+
+#Modelo Comunicación ARIMA(0,0,0) predicciones
+
+predCom <- function(x){
+  dane1 = ts(GruBienSer$Com)[1:x]
+  Arimadane=arima(dane1, order = c(0,0,0))
+  return(forecast(Arimadane)$mean[1])
+}
+
+VecPreCom=1:6
+for (i in 78:83){
+  VecPreCom[i-77] <- predCom(i)
+}
+
+#Modelo Alimentos ARIMA(1,0,0) predicciones
+
+predAli <- function(x){
+  dane1 = ts(GruBienSer$Ali)[1:x]
+  Arimadane=arima(dane1, order = c(1,0,0))
+  return(forecast(Arimadane)$mean[1])
+}
+
+VecPreAli=1:6
+for (i in 78:83){
+  VecPreAli[i-77] <- predAli(i)
+}
+
+#Modelo Vestuario ARIMA(0,1,3) predicciones
+
+predVes <- function(x){
+  dane1 = ts(GruBienSer$Ves)[1:x]
+  Arimadane=arima(dane1, order = c(0,1,3))
+  return(forecast(Arimadane)$mean[1])
+}
+
+VecPreVes=1:6
+for (i in 78:83){
+  VecPreVes[i-77] <- predVes(i)
+}
+
+#Modelo Salud AR(3) predicciones
+
+predSal <- function(x){
+  dane1 = ts(GruBienSer$Sal)[1:x]
+  Arimadane=arima(dane1, order = c(3,0,0))
+  return(forecast(Arimadane)$mean[1])
+}
+
+VecPreSal=1:6
+for (i in 78:83){
+  VecPreSal[i-77] <- predSal(i)
+}
+#Pesos de, Ali, Viv, Sal, Edu, Div, Tran, Com y Otr respectivamente.
+vectorpesos=c(0.2821, 0.301, 0.0516, 0.0243, 0.0573, 0.031, 0.1519, 0.0372, 0.0635)
+
+#Matrix de las prediciones cada fila es un tiempo t desde junio de 2018 a noviembre de 2018
+MatDesag <- cbind(VecPreAli, VecPreViv,VecPreVes,VecPreSal,VecPreEdu,VecPreDiv,VecPreTran,VecPreCom,VecPreOtr)
+
+#Predicción
+
+PreDesag=MatDesag%*%vectorpesos
+
+#Modelo IPC total y predicci\'on.
+
+predTot <- function(x){
+  dane1 = ts(GruBienSer$Tot)[1:x]
+  Arimadane=arima(dane1, order = c(0,0,2))
+  return(forecast(Arimadane)$mean[1])
+}
+
+VecPreTot=1:6
+for (i in 78:83){
+  VecPreTot[i-77] <- predTot(i)
+}
+#Valor Real
+TotalReal=ts(GruBienSer$Tot)[79:84]
+
+#Comparacion de la predicion contra Index Y Dane
+
+plot(TotalReal, type="o", pch=21,  col="red", ylim=c(-0.5,0.5), axes=FALSE, ann=FALSE)
+axis(1, at=1:6, lab=c("Jul","Ago","Sep","Oct","Nov","Dic"))
+axis(2, las=2, at=-1:1)
+box()
+title(xlab="Año 2018", col.lab=rgb(0,0.5,0))
+title(ylab="IPC", col.lab=rgb(0,0.5,0))
+lines(PreDesag, type="o",pch=20, col="blue")
+lines(VecPreTot, type="o", pch=22)
+legend(4, 0.05, c("IPC","IPCdesag","IPCtot"), cex=1, 
+       col=c("blue","red", "black"), pch=20:22, lty=1:1)
+
+
+summary(lm(TotalReal~PreDesag))
+summary(lm(TotalReal~VecPreTot))

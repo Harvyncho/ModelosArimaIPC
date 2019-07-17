@@ -1,0 +1,29 @@
+
+library("forecast")
+library("stats")
+library("fUnitRoots")
+
+plot(ts(GruBienSer$Viv), main="Índice Vivienda", 
+     xlab= "Meses", ylab="Vivienda")
+
+#FAC Y FACP de la serie de vivienda,
+
+acf(ts(GruBienSer$Viv))
+pacf(ts(GruBienSer$Viv))
+
+#Mejor Modelo Autoarima considerando el AIC y el BIC y el error estandar
+
+ArViv=arima(ts(GruBienSer$Viv), order=c(0,0,0))
+summary(ArViv)
+
+AIC(ArViv)
+#AIC=9.036
+BIC(ArViv)
+#BIC=13.897
+
+#Las dos graficas en un archivo
+par(mfrow=c(2,1))
+plot(acfViv,main="", 
+     xlab= "Lag", ylab="ACF")
+plot(pacfViv,main="", 
+     xlab= "Lag", ylab="PACF")

@@ -1,0 +1,55 @@
+#Analisis serie Alimentos.
+
+library("forecast")
+library("fGarch")
+library("tseries")
+
+#Gráfica serie de tiempo 
+
+plot(ts(GruBienSer$Ali), main="Índice Alimentos", 
+     xlab= "Meses", ylab="Alimentos")
+
+#Gráficas de la ACF y la PACF
+
+acf(ts(GruBienSer$Ali))
+pacf(ts(GruBienSer$Ali))
+
+#Test de Dickey Fuller
+
+adfTest(ts(GruBienSer$Ali),lags = 1)
+
+#Comparación modelos AR(1) y AR(12)
+
+Ar1Ali=arima(ts(GruBienSer$Ali), order=c(1,0,0))
+summary(Ar1Ali)
+
+Ar12Ali=arima(ts(GruBienSer$Ali), order=c(12,0,0))
+summary(Ar12Ali)
+
+#Comparación criterios AIC y BIC
+
+AIC(Ar1Ali)
+BIC(Ar1Ali)
+
+BIC(Ar12Ali)
+BIC(Ar12Ali)
+
+#Análsis residuales.
+#Calculo residuales
+ResAR1Ali=ArimaAli$residuals
+plot(ResAR1Ali, main="Residuales", 
+     xlab= "Meses", ylab="ResAli")
+
+#Gráfica serie residuales.
+plot(ResAR1Ali, main="Residuales", 
+     xlab= "Meses", ylab="ResAli")
+     
+#ACF y PACF residuales
+
+acf(ResAR1Ali)
+pacf(ResAR1Ali)
+
+#Residuales al cuadrado, volatilidad
+
+rescua=ResAR1Ali**2
+plot(rescua,main="Residuales cuadrados", xlab= "Meses", ylab="ResAli")
